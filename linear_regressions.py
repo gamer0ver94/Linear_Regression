@@ -36,7 +36,6 @@ class LinearRegressions:
         independent_mean = np.mean(independent_var)
         independent_deviation = self.calculate_variance(independent_var)
         dependent_deviation = self.calculate_variance(dependent_var)
-        #print(str(dependent_deviation) + ' ' +str(dependent_mean))
         for data in self.data:
             data.km = (data.km - independent_mean) / independent_deviation
             data.price = (data.price - dependent_mean) / dependent_deviation
@@ -51,56 +50,57 @@ class LinearRegressions:
         return np.sqrt(error / (m - 1))
     
     # predict price base on theta1 and theta2
-    def predict_price(self, km, theta):
-        return theta[0] + (theta[1] * km)
+    def predict_price(self, km, weight, bias):
+        return bias + (weight * km)
 
     # perform gradient descedent algo
-
-    def gradient_descedent(self, theta, learning_rate, error_history):
+    def gradient_descedent(self, weight,bias, learning_rate, error_history):
         
-        new_theta = [0,0]
-        gradient_zero = self.calc_derivative_weight(theta)
-        gradient_one = self.calc_derivative_bias(theta)
-        # print('gradient_zero: ' + str(gradient_zero))
-        # print('gradient_one: ' + str(gradient_one))
-        new_theta[0] = theta[0] - (learning_rate * gradient_zero)
-        new_theta[1] = theta[1] - (learning_rate * gradient_one)
-        print(theta)
+        deriv_weight = self.calc_derivative_weight(weight,bias)
+        deriv_bias = self.calc_derivative_bias(weight, bias)
+        weight = weight - (learning_rate * deriv_weight)
+        bias = bias - (learning_rate * deriv_bias)
         
-        return new_theta
+        return weight, bias
     
-    def calc_derivative_weight(self, theta):
+    def calc_derivative_weight(self, weight, bias):
         error = 0
         for data in self.data:
-            error += (self.predict_price(data.km, theta) - data.price) * (2 * data.km)
+            predicted_price = self.predict_price(data.km, weight, bias)
+            error += (predicted_price - data.price) * (2 * data.km)
         return error / len(self.data)
 
 
-    def calc_derivative_bias(self, theta):
+    def calc_derivative_bias(self, weight, bias):
         error = 0
         for data in self.data:
-            error += (self.predict_price(data.km, theta) - data.price) * 2
+            predicted_price = self.predict_price(data.km, weight, bias)
+            error += (predicted_price - data.price) * 2
         return error / len(self.data)
 
-    def mse(self, theta):
+    def mse(self, weight, bias):
         mse = 0
         for data in self.data:
-            mse += (self.predict_price(data.km, theta) - data.price) ** 2
+            predicted_price = self.predict_price(data.km, weight, bias)
+            mse += (predicted_price - data.price) ** 2
         return mse / len(self.data)
 
     # train model using learning rate to define calculation rate
     def train_model(self, error_history):
-        theta = [0,0]
+        weight, bias = 0,0
         self.extract_data()
-        for i in range(10000):
-            error_history.append(self.mse(theta))
-            theta = self.gradient_descedent(theta, self.learning_rate, error_history)
-            if (self.mse(theta) < 0.8):
-                print('stope at ' + str(i))
-                break
-               
+        for i in range(1000):
+            error_history.append(self.mse(weight, bias))
+            weight, bias = self.gradient_descedent(weight, bias, self.learning_rate, error_history)
+            # print('theta : ' + str(theta))
+        print(error_history)
         #self.showGraphData(theta, error_history)
-        return theta
+        plt.plot(error_history)
+        plt.xlabel('Iteration')
+        plt.ylabel('Mean Squared Error')
+        plt.title('Error History During Training')
+        plt.show()
+        return weight, bias
     
     def showGraphData(self, theta, error_history):
 
