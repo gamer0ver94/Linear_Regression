@@ -17,7 +17,7 @@ class LinearRegressions:
             km = file_data.km[i]
             price = file_data.price[i]
             self.data.append(Car(km, price))
-        self.standardize_data()
+        return self.standardize_data()
         #self.print_data()
 
     def print_data(self):
@@ -41,6 +41,7 @@ class LinearRegressions:
 
         print(f"Standard deviation of price: {dependent_std_dev}\nMean of price: {dependent_mean}")
         print(f"Standard deviationa of km: {independent_std_dev}\nMean of km: {independent_mean}")
+        return independent_std_dev, independent_mean
 
     # calculate the variance of a list of numbers
     def calculate_variance(self, data):
@@ -91,9 +92,19 @@ class LinearRegressions:
     def train_model(self, error_history):
         weight = 0
         bias = 0
-        self.extract_data()
+        std_deviation, mean = self.extract_data()
         for i in range(70000):
             error_history.append(self.mse(weight, bias))
             weight, bias = self.gradient_descedent(weight, bias, self.learning_rate, error_history)
-        return weight, bias
+        self.showdata()
+        return weight, bias, std_deviation, mean
     
+    def showdata(self):
+        plt.axis([0, 10, 0, 1])
+
+        for i in range(1000):
+            y = np.random.random()
+            plt.scatter(i, y)
+            plt.pause(0.05)
+
+        plt.show()
