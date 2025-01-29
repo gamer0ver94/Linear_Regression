@@ -93,18 +93,15 @@ class LinearRegressions:
         weight = 0
         bias = 0
         std_deviation, mean = self.extract_data()
-        for i in range(70000):
+        for i in range(100):
             error_history.append(self.mse(weight, bias))
             weight, bias = self.gradient_descedent(weight, bias, self.learning_rate, error_history)
-        self.showdata()
+        self.show_plot_data(weight, bias)
         return weight, bias, std_deviation, mean
     
-    def showdata(self):
-        plt.axis([0, 10, 0, 1])
-
-        for i in range(1000):
-            y = np.random.random()
-            plt.scatter(i, y)
-            plt.pause(0.05)
-
+    def show_plot_data(self, weight, bias):
+        plt.plot([1, 2, 3, 4], [1, 4, 9, 16], 'ro')
+        plt.axis((0, 6, 0, 20))
+        plt.plot([1, 2, 3, 4], np.array(self.predict_price(weight, bias,0)), color='green', label='Regression Line')
         plt.show()
+     
