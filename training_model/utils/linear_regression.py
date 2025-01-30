@@ -9,6 +9,7 @@ class LinearRegressions:
         self.data_size = 0
         self.learning_rate = learning_rate
         self.data = []
+        self.theta_history = []
     # extract data from file name
     def extract_data (self):
         file_data = pd.read_csv(self.file_path)
@@ -96,12 +97,37 @@ class LinearRegressions:
         for i in range(100):
             error_history.append(self.mse(weight, bias))
             weight, bias = self.gradient_descedent(weight, bias, self.learning_rate, error_history)
-        self.show_plot_data(weight, bias)
+            self.theta_history.append([weight, bias])
+        self.show_plot_data(weight, bias, std_deviation, mean, error_history)
         return weight, bias, std_deviation, mean
     
-    def show_plot_data(self, weight, bias):
-        plt.plot([1, 2, 3, 4], [1, 4, 9, 16], 'ro')
-        plt.axis((0, 6, 0, 20))
-        plt.plot([1, 2, 3, 4], np.array(self.predict_price(weight, bias,0)), color='green', label='Regression Line')
+    def show_plot_data(self, weight, bias, std, mean, mse_history):
+        # Extract the km and price data
+        Y = [data.price for data in self.data]
+        X = [data.km * std + mean for data in self.data]  # Scaled km values
+        
+        # Predict the prices using the model
+        test = [self.predict_price(data.km, weight, bias) for data in self.data]
+
+        # Create a figure with two subplots (1 row, 2 columns)
+        fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # 1 row, 2 columns
+
+        # First plot: Data points and regression line
+        axs[0].scatter(X, Y, color='blue', label='Data points')
+        axs[0].plot(X, test, color='red', label='Regression Line')
+        axs[0].set_title('Linear Regression - Price vs Scaled Km')
+        axs[0].set_xlabel('Scaled Km (km * std + mean)')
+        axs[0].set_ylabel('Price')
+        axs[0].legend()
+
+        # Second plot: Error history (MSE over iterations)
+        axs[1].plot(range(1, len(mse_history) + 1), mse_history, color='red')
+        axs[1].set_title('MSE Over Iterations')
+        axs[1].set_xlabel('Iteration')
+        axs[1].set_ylabel('Mean Squared Error (MSE)')
+
+        # Adjust layout to prevent overlapping subplots
+        plt.tight_layout()
         plt.show()
-     
+
+    

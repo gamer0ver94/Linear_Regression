@@ -11,13 +11,8 @@ def main():
     bias = float(json_data['theta1'])
     Y = real_data.price.copy()
     X = (real_data.km.copy() - mean) / std_derivation
-    # for data in X:
-    #     data = (data - mean) / std_derivation
     mserror = r_squared(X,Y, weight, bias)
-    print(str(int(mserror * 100)) + '%')
-    #   0 - 100%
-    #   er- 
-    # print(str(100 - percentage))
+    print(str(int(mserror * 100))  + '% Percision.' if(int(mserror) >= 0)else(str(0)) + '% Percision')
     return
 
 def r_squared(X, Y, weight, bias):
