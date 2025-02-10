@@ -30,5 +30,7 @@ def r_squared(X, Y, weight, bias):
 
 def predict_price(weight, bias, target):
     return bias + (weight * target)
-main()
+
+if __name__ == '__main__':
+    main()
 

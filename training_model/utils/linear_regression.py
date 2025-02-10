@@ -19,7 +19,6 @@ class LinearRegressions:
             price = file_data.price[i]
             self.data.append(Car(km, price))
         return self.standardize_data()
-        #self.print_data()
 
     def print_data(self):
         for data in self.data:
@@ -35,13 +34,8 @@ class LinearRegressions:
         dependent_mean = np.mean(dependent_var)
         independent_std_dev = np.std(independent_var)
         dependent_std_dev = np.std(dependent_var)
-
         for data in self.data:
             data.km = (data.km - independent_mean) / independent_std_dev
-            # data.price = (data.price - dependent_mean) / dependent_std_dev
-
-        print(f"Standard deviation of price: {dependent_std_dev}\nMean of price: {dependent_mean}")
-        print(f"Standard deviationa of km: {independent_std_dev}\nMean of km: {independent_mean}")
         return independent_std_dev, independent_mean
 
     # calculate the variance of a list of numbers
@@ -66,7 +60,7 @@ class LinearRegressions:
         bias = bias - (learning_rate * deriv_bias)
         
         return weight, bias
-    
+    #calculate derivative weight
     def calc_derivative_weight(self, weight, bias):
         error = 0
         for data in self.data:
@@ -74,7 +68,7 @@ class LinearRegressions:
             error += data.km * (data.price - predicted_price)
         return (-2 / len(self.data)) * error 
 
-
+    #calculate derivative bias
     def calc_derivative_bias(self, weight, bias):
         error = 0
         for data in self.data:
@@ -82,6 +76,7 @@ class LinearRegressions:
             error += (data.price - predicted_price)
         return (-2 / len(self.data)) * error
 
+    # Calculate the mean square error
     def mse(self, weight, bias):
         mse = 0
         for data in self.data:
@@ -94,7 +89,7 @@ class LinearRegressions:
         weight = 0
         bias = 0
         std_deviation, mean = self.extract_data()
-        for i in range(100):
+        for i in range(70000):
             error_history.append(self.mse(weight, bias))
             weight, bias = self.gradient_descedent(weight, bias, self.learning_rate, error_history)
             self.theta_history.append([weight, bias])

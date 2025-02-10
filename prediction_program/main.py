@@ -51,4 +51,5 @@ def input_validation(input_value):
         exit()
     return value
         
-main()
+if __name__ == '__main__':
+    main()

@@ -13,5 +13,6 @@ def main():
     }
     with open('../model_data.json', 'w') as json_file:
         json.dump(json_obj, json_file)
-    print(weight, bias)
-main()
+    print('Train Completed.')
+if __name__ == '__main__':
+    main()
